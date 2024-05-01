@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[9]:
+# In[ ]:
 
 
-print('hola')
+print('hola mundo')
 get_ipython().system('pip install jupyter nbconvert')
 
 
@@ -56,4 +56,58 @@ def notebook_to_script(notebook_name, repo_url):
 
 # Usage example commented out
 notebook_to_script('test', 'https://github.com/ferranfont/inter.git')
+
+
+# In[12]:
+
+
+import os
+import subprocess
+
+def notebook_to_script(notebook_name, repo_url):
+    script_name = f"{notebook_name}.py"
+    if not os.path.exists(notebook_name + '.ipynb'):
+        print(f"Error: The notebook '{notebook_name}.ipynb' does not exist in the current directory.")
+        return
+    
+    convert_command = f"jupyter nbconvert --to script {notebook_name}.ipynb"
+    
+    try:
+        subprocess.run(convert_command, shell=True, check=True, capture_output=True, text=True)
+    except subprocess.CalledProcessError as e:
+        print("Failed to convert notebook:", e.stderr if e.stderr else "No error details available.")
+        return  # Exit if conversion fails
+
+    if not os.path.exists('.git'):
+        subprocess.run("git init", shell=True, check=True)
+    
+    existing_url = subprocess.run("git remote get-url origin", shell=True, capture_output=True, text=True)
+    if existing_url.returncode == 0 and existing_url.stdout.strip() == repo_url:
+        print("Remote 'origin' is already set to the correct URL.")
+    else:
+        if existing_url.returncode == 0:
+            print("Remote 'origin' already exists, resetting to new URL")
+            subprocess.run(f"git remote set-url origin {repo_url}", shell=True, check=True)
+        else:
+            print("Adding new remote 'origin'.")
+            subprocess.run(f"git remote add origin {repo_url}", shell=True, check=True)
+
+    subprocess.run(f"git add {script_name}", shell=True, check=True)
+    commit_message = "Add script generated from Jupyter Notebook"
+    subprocess.run(f'git commit -m "{commit_message}"', shell=True, check=True)
+    
+    try:
+        subprocess.run("git push -u origin master", shell=True, check=True, capture_output=True, text=True)
+    except subprocess.CalledProcessError as e:
+        print("Failed to push to GitHub:", e.stderr if e.stderr else "No error details available.")
+
+# Usage example uncommented for actual use
+notebook_to_script('test', 'https://github.com/ferranfont/inter.git')
+
+
+# In[11]:
+
+
+import os
+print(os.path.exists('test.ipynb'))  # This should return True if the file exists
 
