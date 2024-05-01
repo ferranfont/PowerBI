@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[5]:
+# In[9]:
 
 
 print('hola')
+get_ipython().system('pip install jupyter nbconvert')
 
 
-# In[6]:
+# In[10]:
 
 
 # #subir a github automaticamente
