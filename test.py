@@ -1,20 +1,15 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[16]:
+# In[20]:
 
 
-print('hola mund111o')
+print('testjddkdk')
 
 
-# In[17]:
+# In[21]:
 
 
-# #subir a github automaticamente
-# ejecutar esto en el CRM
-#> git config --global credential.helper cache
-# Set the cache to timeout after 1 hour (3600 seconds); adjust as needed
-#> git config --global credential.helper 'cache --timeout=3600'
 import os
 import subprocess
 
@@ -25,7 +20,7 @@ def notebook_to_script(notebook_name, repo_url):
     try:
         subprocess.run(convert_command, shell=True, check=True)
     except subprocess.CalledProcessError as e:
-        print("Failed to convert notebook:", e)
+        print("Failed to convert notebook:", e.stderr if e.stderr else "No error details available.")
         return  # Exit if conversion fails
 
     if not os.path.exists('.git'):
@@ -45,16 +40,33 @@ def notebook_to_script(notebook_name, repo_url):
 
     subprocess.run(f"git add {script_name}", shell=True, check=True)
     
-    commit_message = "Add script generated from Jupyter Notebook"
-    subprocess.run(f'git commit -m "{commit_message}"', shell=True, check=True)
-    
+    # Checking for staged changes
+    status_result = subprocess.run("git status --porcelain", shell=True, capture_output=True, text=True)
+    if status_result.stdout:
+        commit_message = "Add script generated from Jupyter Notebook"
+        try:
+            subprocess.run(f'git commit -m "{commit_message}"', shell=True, check=True)
+        except subprocess.CalledProcessError as e:
+            print("Failed to commit:", e.stderr if e.stderr else "No error details available.")
+            return  # Exit if commit fails
+    else:
+        print("No changes to commit.")
+        return  # Exit if no changes
+
+    # Push to remote repository
     try:
         subprocess.run("git push -u origin master", shell=True, check=True)
     except subprocess.CalledProcessError as e:
-        print("Failed to push to GitHub:", e.stderr.decode())
+        print("Failed to push to GitHub:", e.stderr if e.stderr else "No error details available.")
 
-# Usage example commented out
-notebook_to_script('test', 'https://github.com/ferranfont/inter.git')
+# Usage example uncommented for actual use
+notebook_to_script('test', 'https://github.com/ferranfont/IES_poblenou.git')
+
+
+# In[ ]:
+
+
+
 
 
 # In[ ]:
