@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[27]:
+# In[30]:
 
 
 print('testjddddddfff55kdk')
 
 
-# In[28]:
+# In[31]:
 
 
 import os
@@ -62,7 +62,7 @@ def notebook_to_script(notebook_name, repo_url):
 notebook_to_script('github_push', 'https://github.com/ferranfont/IES_poblenou.git')
 
 
-# In[29]:
+# In[33]:
 
 
 import os
@@ -110,7 +110,7 @@ def notebook_to_script(notebook_name, repo_url):
 
     # Push to remote repository
     try:
-        subprocess.run("git push -u origin master", shell=True, check=True)
+        subprocess.run("git push -u origin main", shell=True, check=True)
     except subprocess.CalledProcessError as e:
         print("Failed to push to GitHub:", e.stderr if e.stderr else "No error details available.")
 
